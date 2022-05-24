@@ -87,7 +87,7 @@ dropContainer.on('drop', e => {
 
             var formData = new FormData();
             formData.append("file", file);
-            const {data} = await axios.post('/api/upload', formData, {
+            const {data} = await axios.post(document.location.origin + '/api/upload', formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data'
                 }
