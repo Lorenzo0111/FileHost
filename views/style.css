@@ -82,7 +82,7 @@
 	transform: translate(-50%, var(--y));
 }
 
-.drop .center > div {
+.drop .center > button {
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -90,48 +90,11 @@
 	height: 43px;
 	width: 120px;
 	background: var(--primary);
-	border-radius: 5px;
 	transition: width .2s ease, height .2s ease, border-radius .2s ease, opacity .4s ease;
-	pointer-events: none;
-}
-
-.drop .center > div span,
-      .drop .center > div .circle,
-      .drop .center > div > svg {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	display: block;
-}
-
-.drop .center > div span,
-      .drop .center > div > svg {
-	color: #fff;
-	transition: opacity .2s ease;
-}
-
-.drop .center > div span {
-	font-weight: 500;
-	font-size: 16px;
-}
-
-.drop .center > div > svg {
-	width: 32px;
-	height: 32px;
-	opacity: 0;
-}
-
-.drop .center > div .circle {
-	opacity: 0;
-}
-
-.drop .center > div .circle svg {
-	width: 92px;
-	height: 92px;
-	color: var(--primary);
-	display: block;
-	transform: rotate(var(--r));
+	border: 1px #5628EE solid;
+	border-radius: 7px;
+	color: white;
+	cursor: pointer;
 }
 
 .drop .intro,
@@ -327,16 +290,6 @@
 
 .drop.dragged .center > div span {
 	opacity: 0;
-}
-
-.drop.dragged .center > div > svg {
-	opacity: 1;
-	transition-delay: .2s;
-}
-
-.drop.dragged .center > div .circle {
-	opacity: 1;
-	transition: opacity 0s ease .2s;
 }
 
 .drop.dragged .intro {

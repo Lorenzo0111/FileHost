@@ -1,7 +1,17 @@
 let dropContainer = $('.drop'),
     center = dropContainer.find('.center > div'),
     circle = center.children('.circle'),
-    list = dropContainer.children('.list');
+    list = dropContainer.children('.list'),
+    uploadButton = $('#upload'),
+    fileInput = $("#file-input");
+
+uploadButton.click(function () {
+    fileInput.trigger('click');
+});
+
+fileInput.change(function () {
+    startUpload(this.files);
+});
 
 let started = false,
     currentDistance,
@@ -54,10 +64,15 @@ dropContainer.on('dragleave', e => {
 });
 
 dropContainer.on('drop', e => {
+    createParticles(dropContainer, mouse);
+    startUpload(e.originalEvent.dataTransfer.files);
+});
+
+function startUpload(files) {
+    uploadButton.css("display", "none");
 
     if(!dropContainer.hasClass('dropped')) {
         dropContainer.addClass('dropped');
-        createParticles(dropContainer, mouse);
         setTimeout(() => {
             startAnimation(currentDistance, 18, 100, () => {
                 dropContainer.removeClass('showDrops');
@@ -66,7 +81,6 @@ dropContainer.on('drop', e => {
                     setTimeout(() => {
                         dropContainer.addClass('show');
 
-                        //Fake Upload durations
                         setTimeout(() => {
                             list.find('li .progress').each(function() {
                                 startPercent($(this), 0, 100, 1200);
@@ -79,8 +93,8 @@ dropContainer.on('drop', e => {
         }, 400);
     }
 
-    for(let i = 0; i < e.originalEvent.dataTransfer.files.length; i++) {
-        let file = e.originalEvent.dataTransfer.files[i],
+    for(let i = 0; i < files.length; i++) {
+        let file = files[i],
             reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async function(e) {
@@ -97,7 +111,7 @@ dropContainer.on('drop', e => {
             let bin = this.result,
                 li = $('<li />'),
                 text = $('<div />').addClass('text'),
-                strong = $('<strong />').html("<a href=''" + data + "'>" + file.name + "</a>"),
+                strong = $('<strong />').html("<a href='" + data + "'>" + file.name + "</a>"),
                 small = $('<small />').text(bytesToSize(file.size)),
                 progress = $('<div />').addClass('progress').html('<svg class="pie" width="32" height="32"><circle r="8" cx="16" cy="16" /></svg><svg class="tick" viewBox="0 0 24 24"><polyline points="18,7 11,16 6,12" /></svg>');
 
@@ -112,8 +126,7 @@ dropContainer.on('drop', e => {
 
         }
     }
-
-});
+}
 
 var dotQuantity = 160,
     dotSizeMax = 3,
