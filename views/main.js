@@ -1,9 +1,14 @@
 let dropContainer = $('.drop'),
+    pasteContainer = $('.paste'),
     center = dropContainer.find('.center > div'),
     circle = center.children('.circle'),
     list = dropContainer.children('.list'),
     uploadButton = $('#upload'),
-    fileInput = $("#file-input");
+    fileInput = $("#file-input"),
+    pasteForm = $("#paste"),
+    title = $('#title'),
+    content = $('#content'),
+    secret = $('#secret');
 
 uploadButton.click(function () {
     fileInput.trigger('click');
@@ -101,29 +106,32 @@ function startUpload(files) {
 
             var formData = new FormData();
             formData.append("file", file);
-            const {data} = await axios.post(document.location.origin + '/api/upload', formData, {
-                headers: {
-                'Content-Type': 'multipart/form-data'
+            try {
+                const {data} = await axios.post(document.location.origin + '/api/upload', formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+
+                let bin = this.result,
+                    li = $('<li />'),
+                    text = $('<div />').addClass('text'),
+                    strong = $('<strong />').html("<a href='" + data + "'>" + file.name + "</a>"),
+                    small = $('<small />').text(bytesToSize(file.size)),
+                    progress = $('<div />').addClass('progress').html('<svg class="pie" width="32" height="32"><circle r="8" cx="16" cy="16" /></svg><svg class="tick" viewBox="0 0 24 24"><polyline points="18,7 11,16 6,12" /></svg>');
+
+                text.append(strong).append(small).appendTo(li);
+                progress.appendTo(li);
+
+                progress.find('.pie').css('strokeDasharray', 0 + ' ' + 2 * Math.PI * 8);
+
+                if(list.find('li').length < 5) {
+                    li.appendTo(list);
                 }
-            });
-
-
-            let bin = this.result,
-                li = $('<li />'),
-                text = $('<div />').addClass('text'),
-                strong = $('<strong />').html("<a href='" + data + "'>" + file.name + "</a>"),
-                small = $('<small />').text(bytesToSize(file.size)),
-                progress = $('<div />').addClass('progress').html('<svg class="pie" width="32" height="32"><circle r="8" cx="16" cy="16" /></svg><svg class="tick" viewBox="0 0 24 24"><polyline points="18,7 11,16 6,12" /></svg>');
-
-            text.append(strong).append(small).appendTo(li);
-            progress.appendTo(li);
-
-            progress.find('.pie').css('strokeDasharray', 0 + ' ' + 2 * Math.PI * 8);
-
-            if(list.find('li').length < 5) {
-                li.appendTo(list);
+            } catch (e) {
+                toastr.error(e.response.data)
             }
-
         }
     }
 }
@@ -387,3 +395,63 @@ function bytesToSize(bytes) {
         sizes = ['Bytes', 'Kb', 'Mb', 'Gb', 'Tb'];
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 }
+
+async function checkHash() {
+    $("#upload-i").removeClass("active");
+    $("#new-i").removeClass("active");
+    $("#view-i").addClass("none");
+    dropContainer.addClass("none");
+    pasteContainer.addClass("none");
+    document.getElementById('md').innerHTML = "";
+
+    switch (document.location.hash) {
+        case "#new":
+            $("#new-i").addClass("active");
+            dropContainer.addClass("none");
+            pasteContainer.removeClass("none");
+            break;
+        case "#upload":
+            $("#upload-i").addClass("active");
+            dropContainer.removeClass("none");
+            pasteContainer.addClass("none");
+            break;
+        default:
+            if (document.location.hash.startsWith("#")) {
+                try {
+                    const {data} = await axios.get(document.location.origin + '/api/paste?name=' + document.location.hash.substring(1));
+
+                    document.getElementById('md').innerHTML = marked.parse(data);
+                    $("#view-i").addClass("active");
+                    $("#view-i").removeClass("none");
+                } catch (e) {
+                    toastr.error(e.response.data);
+                }
+            } else {
+                document.location.hash = "#new";
+            }
+
+            break;
+    }
+}
+
+checkHash();
+
+window.addEventListener("hashchange", function(event) {
+    checkHash();
+});
+
+pasteForm.submit(async function (e) {
+    e.preventDefault();
+
+    try {
+        const {data} = await axios.post(document.location.origin + '/api/paste', {
+            name: title.val(),
+            text: content.val(),
+            secret: secret.val()
+        });
+
+        window.location.href = data;
+    } catch (e) {
+        toastr.error(e.response.data);
+    }
+});

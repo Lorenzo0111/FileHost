@@ -3,6 +3,7 @@ const app = express();
 
 require('dotenv').config();
 
+app.use(express.json());
 app.use("/", express.static(__dirname + "/views"));
 app.use("/api", require('./routes/api.js'));
 
