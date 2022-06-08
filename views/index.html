@@ -2,60 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>File Uploader</title>
+    <title>Private Documentation</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-    <div class="box">
-        <nav>
-            <ul>
-                <li class="active" id="new-i">
-                    <a href="#new">New Page</a>
-                </li>
-                <li id="upload-i">
-                    <a href="#upload">Upload File</a>
-                </li>
-                <li id="view-i" class="none">
-                    <a href="#">View</a>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="drop none">
-            <div class="intro">
-                <h4>Drag your file</h4>
-                <p>Drag &amp; Drop to upload and receive a download link</p>
-            </div>
-            <div class="hint">Drop your files to upload</div>
-            <div class="center">
-                <input id="file-input" type="file" name="name" style="display: none;" />
-                <button id="upload">
-                    Upload
-                </button>
-            </div>
-            <ul class="list"></ul>
-        </div>
-
-        <div class="paste none">
-            <form id="paste">
-                <input type="text" id="title" placeholder="Title" />
-                <textarea id="content" placeholder="Content"></textarea>
-                <input type="password" id="secret" placeholder="Secret Key" />
-                <input type="submit" value="Submit" />
-            </form>
-        </div>
-
-        <div id="md">
-        </div>
+<body style="background-color: #a7adba; font-family: Arial, Helvetica, sans-serif;">
+    <div style="margin: -10px; height: 100vh; background-color: #65737e; width: 200px;" id="nav">
+        <li style="margin: 10px; text-align: center; list-style: none; min-height: 32px; border-radius: 3px; border-color: transparent; color:white; background-color: darkgreen;" href="/create.html">New Page</li>
     </div>
+    <div class="content" id="md"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js" integrity="sha512-VEBjfxWUOyzl0bAwh4gdLEaQyDYPvLrZql3pw1ifgb6fhEvZl9iDDehwHZ+dsMzA0Jfww8Xt7COSZuJ/slxc4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="main.js"></script>

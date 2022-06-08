@@ -1,76 +1,57 @@
 const { Router } = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-
+const Page = require("../models/Page");
 const router = Router();
-const storage = multer.diskStorage({
-    destination: 'uploads/',
-    filename: (req, file, cb) => {
-       cb(null, Date.now() + path.extname(file.originalname))
-    }
-});
-const upload = multer({
-     storage: storage,
-     dest: 'uploads/',
-     limits: {
-         fileSize: 5000000
-     }
-});
-const SECRET = process.env.SECRET || 'secret';
 
-router.post("/upload", upload.single("file"), (req,res) => {
-    if (!req.file) {
-        res.status(400).send("No file uploaded");
+router.get("/list", async (req,res) => {
+    const pages = await Page.find().exec();
+
+    const pageList = pages.map(page => {
+        return page.title;
+    });
+
+    res.json(pageList);
+});
+
+router.get("/get", async (req,res) => {
+    const {title} = req.query;
+
+    if (!title) {
+        res.json({
+            error: "No title provided"
+        });
         return;
     }
 
-    res.send(req.protocol + '://' + req.get('host') + "/api/download?file=" + req.file.filename);
+    const page = await Page.findOne({title: title}).exec();
+
+    res.json(page);
 });
 
-router.post("/paste", (req,res) => {
-    const { name, text, secret } = req.body;
+router.post("/new", async (req,res) => {
+    const { title, content } = req.body;
 
-    if (!name || !text || !secret) {
-        res.status(400).send("No text or name or secret uploaded");
-        return;
+    if (!title || !content) {
+        return res.status(400).json({
+            message: "Title and content are required"
+        });
     }
 
-    if (!(secret === SECRET)) {
-        res.status(401).send("Wrong secret");
-        return;
+    const previous = await Page.findOne({ title }).exec();
+    if (previous) {
+        previous = await Page.findOneAndUpdate({ title }, { content }).exec();
+        return res.json(previous);
     }
 
-    const fileName = encodeURIComponent(name.replace(" " , "-") + ".md");
+    const page = new Page({
+        title,
+        content
+    });
 
-    fs.writeFileSync("uploads/" + fileName, text);
+    await page.save();
 
-    res.send(req.protocol + '://' + req.get('host') + "/#" + fileName);
-});
-
-router.get("/download", (req,res) => {
-    if (!req.query.file) {
-        return res.status(400).send("No file specified");
-    }
-
-    res.download(`uploads/${encodeURIComponent(req.query.file)}`);
-});
-
-router.get("/paste", (req,res) => {
-    if (!req.query.name) {
-        return res.status(400).send("No name specified");
-    }
-
-    let name = encodeURIComponent(req.query.name.replace(" ","-"));
-    if (!name.endsWith(".md")) {
-        name += ".md";
-    }
-
-    if (!fs.existsSync(`uploads/${name}`)) {
-        return res.status(404).send("File not found");
-    }
-
-    res.sendFile(path.join(__dirname, `../uploads/${name}`));
+    res.json({
+        message: "Page created"
+    });
 });
 
 module.exports = router;
