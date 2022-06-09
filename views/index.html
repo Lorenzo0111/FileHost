@@ -8,15 +8,48 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body style="background-color: #a7adba; font-family: Arial, Helvetica, sans-serif;">
-    <div style="margin: -10px; height: 100vh; background-color: #65737e; width: 200px;" id="nav">
+    <div style="margin: -10px; height: 100vh; background-color: #65737e; width: 200px; display: none;" id="nav">
+        <img src="logo.png" width="150px" height="150px" style="margin-left: 20px;">
         <li style="margin: 10px; text-align: center; list-style: none; min-height: 32px; border-radius: 3px; border-color: transparent; color:white; background-color: darkgreen;" href="/create.html">New Page</li>
     </div>
-    <div class="content" id="md"></div>
+    <div style="display: none;" class="content" id="md"></div>
+
+    <form style="width: fit-content; height: fit-content;">
+        <input type="password" name="password" placeholder="Secret Code">
+        <input type="submit" value="Login">
+    </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="main.js"></script>
+    <script>
+        $("form").submit(function (e) {
+            e.preventDefault();
+
+            var pswd = $("input[name='password']").val();
+            if (pswd == "") {
+                toastr.error("Please enter a password");
+                return;
+            }
+
+            password = pswd;
+            axios.get("/api/login", {
+                headers: {
+                    authorization: pswd
+                }
+            }).then(response => {
+                if (response.data) {
+                    $("#nav").show();
+                    $("#md").show();
+                    $("form").hide();
+                    loadData();
+                }
+            }).catch(error => {
+                toastr.error("Invalid password");
+            });
+        })
+    </script>
 </body>
 </html>
