@@ -38,11 +38,17 @@ router.get("/login", async (req,res) => {
 });
 
 router.post("/new", async (req,res) => {
-    const { title, content } = req.body;
+    const { title, content, secret } = req.body;
 
-    if (!title || !content) {
+    if (!title || !content || !secret) {
         return res.status(400).json({
             message: "Title and content are required"
+        });
+    }
+
+    if (secret !== process.env.ADMINSECRET) {
+        return res.status(401).json({
+            message: "Secret password not valid"
         });
     }
 
@@ -74,8 +80,6 @@ function checkHeader(req,res) {
     }
 
     if (req.headers.authorization !== process.env.SECRET) {
-        console.log(req.headers.authorization);
-        console.log(process.env.SECRET);
         res.status(401).json({
             message: "Invalid authorization header"
         });

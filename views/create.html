@@ -9,8 +9,9 @@
 </head>
 <body style="display: block;">
     <form style="width: fit-content; height: fit-content;">
-        <input type="text" name="title" placeholder="Title">
-        <textarea name="content" placeholder="Content"></textarea>
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="password" name="secret" placeholder="Secret" required>
+        <textarea name="content" placeholder="Content" required></textarea>
         <input type="submit" value="Create">
     </form>
 
@@ -23,10 +24,12 @@
 
             var title = $("input[name=title]").val();
             var content = $("textarea[name=content]").val();
+            var secret = $("input[name=secret]").val();
 
             axios.post("/api/new", {
                 title: title.toLowerCase(),
-                content: content
+                content: content,
+                secret: secret
             }).then(function(response) {
                 toastr.success("Page created!");
                 window.location.href = "/";
