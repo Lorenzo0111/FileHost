@@ -9,7 +9,7 @@ function loadData() {
     }).then(response => {
         const pages = response.data;
         const navbarItems = pages.map(page => {
-            return `<li href="#${page}" style="margin: 10px; text-align: center; list-style: none; min-height: 32px; border-radius: 3px; border: black solid 1px;">${page}</li>`;
+            return `<li href="#${page}" style="margin: 10px; text-align: center; list-style: none; min-height: 32px; border-radius: 3px; border: white solid 1px; color:white;">${page}</li>`;
         });
         navbar.append(navbarItems);
     
