@@ -52,7 +52,7 @@ router.post("/new", async (req,res) => {
         });
     }
 
-    const previous = await Page.findOne({ title }).exec();
+    let previous = await Page.findOne({ title }).exec();
     if (previous) {
         previous = await Page.findOneAndUpdate({ title }, { content }).exec();
         return res.json(previous);
